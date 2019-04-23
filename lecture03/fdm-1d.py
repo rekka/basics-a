@@ -75,7 +75,7 @@ plt.subplot(121, title='$u^*$')
 plt.plot(x, v_star)
 plt.subplot(122, title='$b$')
 plt.plot(x[1:-1], b[1:-1])
-plt.savefig('fdm_data.png')
+plt.savefig('fdm_data_N{}.png'.format(N))
 plt.clf()
 
 
@@ -142,7 +142,7 @@ def make_sol_animation(x, v_star, b, vs, label, filename):
 
 x, v_star, b = parameters(N)
 
-print('Computing...')
+print('Computing with N = {}...'.format(N))
 
 jac_us = list(trace(jacobi, v_star, b, N))
 gs_us = list(trace(gauss_seidel, v_star, b, N))
@@ -150,15 +150,17 @@ omega = 2. / (1. + np.sin(np.pi / N))
 sor_us = list(trace(lambda v, b: sor(v, b, omega), v_star, b, N))
 
 print('Plotting...')
-plot_steps(jac_us, v_star, b, x, 'Jacobi', 'jacobi.png')
-plot_steps(gs_us, v_star, b, x, 'Gauss-Seidel', 'gauss_seidel.png')
-plot_steps(sor_us, v_star, b, x, 'SOR $\\omega = {}$'.format(omega), 'sor.png')
+plot_steps(jac_us, v_star, b, x, 'Jacobi', 'jacobi_N{}.png'.format(N))
+plot_steps(gs_us, v_star, b, x, 'Gauss-Seidel', 'gauss_seidel_N{}.png'.format(N))
+plot_steps(sor_us, v_star, b, x, 'SOR $\\omega = {}$'.format(omega), 'sor_N{}.png'.format(N))
 
 print('Animating...')
-make_sol_animation(x, v_star, b, [jac_us], ['Jacobi'], 'fdm-jacobi.mp4')
-make_sol_animation(x, v_star, b, [jac_us, gs_us], ['Jacobi', 'Gauss-Seidel'], 'fdm-gauss_seidel.mp4')
-make_sol_animation(x, v_star, b, [jac_us, gs_us, sor_us], ['Jacobi', 'Gauss-Seidel', 'SOR $\\omega = {:.4}$'.format(omega)], 'fdm-sor.mp4')
-
+try:
+    make_sol_animation(x, v_star, b, [jac_us], ['Jacobi'], 'fdm-jacobi_N{}.mp4'.format(N))
+    make_sol_animation(x, v_star, b, [jac_us, gs_us], ['Jacobi', 'Gauss-SeidelN'], 'fdm-gauss_seidel_N{}.mp4'.format(N))
+    make_sol_animation(x, v_star, b, [jac_us, gs_us, sor_us], ['Jacobi', 'Gauss-Seidel', 'SOR $\\omega = {:.4}$'.format(omega)], 'fdm-sor_N{}.mp4'.format(N))
+except:
+    print('It appears that ffmpeg is not installed. Skipping making animations.')
 
 def make_error_plot(v_star, b, vs, label):
     rs = [[np.sqrt(np.sum((b - Amul(v))**2)) for v in vs] for vs in vs]
