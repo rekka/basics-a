@@ -29,6 +29,7 @@ mpl.rcParams['xtick.labelsize'] = 16
 mpl.rcParams['ytick.labelsize'] = 16
 
 import matplotlib.pyplot as plt
+from matplotlib import animation
 
 # # Direct solver: Gaussian elimation
 
@@ -103,8 +104,8 @@ def plot_steps(vs, v_star, b, x, title, filename):
     plt.savefig(filename)
     plt.clf()
 
-def make_sol_animation(x, v_star, b, vs, label):
-    from matplotlib import animation
+def make_sol_animation(x, v_star, b, vs, label, filename):
+    print('Creating ', filename)
 
     rs = [[b - Amul(v) for v in vs] for vs in vs]
 
@@ -136,7 +137,7 @@ def make_sol_animation(x, v_star, b, vs, label):
     ani = animation.FuncAnimation(fig, animate, frames=len(vs[0]),
                                   interval = 50, blit=True, init_func=init)
 
-    ani.save('fdm-1d.mp4')
+    ani.save(filename)
 
 
 x, v_star, b = parameters(N)
@@ -154,7 +155,9 @@ plot_steps(gs_us, v_star, b, x, 'Gauss-Seidel', 'gauss_seidel.png')
 plot_steps(sor_us, v_star, b, x, 'SOR $\\omega = {}$'.format(omega), 'sor.png')
 
 print('Animating...')
-make_sol_animation(x, v_star, b, [jac_us, gs_us, sor_us], ['Jacobi', 'Gauss-Seidel', 'SOR $\\omega = {:.4}$'.format(omega)])
+make_sol_animation(x, v_star, b, [jac_us], ['Jacobi'], 'fdm-jacobi.mp4')
+make_sol_animation(x, v_star, b, [jac_us, gs_us], ['Jacobi', 'Gauss-Seidel'], 'fdm-gauss_seidel.mp4')
+make_sol_animation(x, v_star, b, [jac_us, gs_us, sor_us], ['Jacobi', 'Gauss-Seidel', 'SOR $\\omega = {:.4}$'.format(omega)], 'fdm-sor.mp4')
 
 
 def make_error_plot(v_star, b, vs, label):
