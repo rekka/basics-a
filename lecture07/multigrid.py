@@ -76,7 +76,7 @@ def parameters(N):
 
     return x, b, v_star
 
-N = 2**10 # Resolution of the test problem
+N = 2**20 # Resolution of the test problem
 x, b, v_star = parameters(N) # Initialize the test parameters
 
 fig = plt.figure(figsize=(16, 6))
